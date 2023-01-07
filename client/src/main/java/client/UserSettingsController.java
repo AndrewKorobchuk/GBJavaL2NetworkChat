@@ -2,7 +2,6 @@ package client;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import service.ServiceMessages;
@@ -44,13 +43,12 @@ public class UserSettingsController {
 
     public void regStatus(String result) {
         if (result.startsWith(ServiceMessages.CHANGE_NICKNAME_OK)) {
-            textArea.appendText("Изменение никнейма прошло успешно\n");
+            textArea.appendText("Nickname change successful\n");
             controller.setLoginUser(nicknameField.getText());
             nickname = nicknameField.getText();
 
         } else {
-            textArea.appendText("Изменение не получилось. Никнейм занят\n");
+            textArea.appendText("The change didn't work. Nickname busy\n");
         }
-        //textArea.appendText(result+"\n");
     }
 }

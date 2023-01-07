@@ -32,9 +32,9 @@ public class RegController {
 
     public void regStatus(String result) {
         if (result.equals("/reg_ok")) {
-            textArea.appendText("Регистрация прошла успешно\n");
+            textArea.appendText("registration completed successfully\n");
         } else {
-            textArea.appendText("Регистрация не получилась. Логин или никнейм заняты\n");
+            textArea.appendText("Registration failed. Login or nickname taken\n");
         }
     }
 }

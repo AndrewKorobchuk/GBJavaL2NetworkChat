@@ -28,7 +28,7 @@ public class ClientHandler {
             manager.readConfiguration(new FileInputStream("logging.properties"));
         } catch (IOException e) {
             e.printStackTrace();
-            throw new RuntimeException("Ошибка чтения файла конфигурации логирования");
+            throw new RuntimeException("Error reading logging configuration file");
         }
 
         this.server = server;
@@ -38,11 +38,9 @@ public class ClientHandler {
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
 
-            //new Thread(() -> {
             server.getExecutorService().execute(() -> {
                 try {
                     socket.setSoTimeout(120000);
-                    //цикл аутентификации
                     while (true) {
                         String str = in.readUTF();
 
@@ -50,7 +48,6 @@ public class ClientHandler {
                             sendMsg("/end");
                             break;
                         }
-//                        if (str.startsWith("/auth")) {
                         if (str.startsWith(ServiceMessages.AUTH)) {
                             String[] token = str.split(" ", 3);
                             if (token.length < 3) {
@@ -69,11 +66,11 @@ public class ClientHandler {
                                     logger.log(Level.INFO, "Client: " + login + " - authenticated");
                                     break;
                                 } else {
-                                    sendMsg("С этим логином уже зашли в чат");
+                                    sendMsg("Already logged into the chat with this username");
                                 }
                             } else {
-                                logger.log(Level.WARNING, "Client: " + login + " - неверный логин / пароль!");
-                                sendMsg("Неверный логин / пароль");
+                                logger.log(Level.WARNING, "Client: " + login + " - incorrect login / password!");
+                                sendMsg("Incorrect login / password");
                             }
                         }
                         if (str.startsWith("/reg")) {
@@ -92,7 +89,6 @@ public class ClientHandler {
                     if(authenticated){
                         socket.setSoTimeout(0);
                     }
-                    //цикл работы
                     while (authenticated) {
                         String str = in.readUTF();
 
@@ -109,12 +105,6 @@ public class ClientHandler {
                                 server.privateMsg(this, token[1], token[2]);
                             }
                             if(str.startsWith(ServiceMessages.CHANGE_NICKNAME)){
-                                /*String[] token = str.split(" ", 3);
-                                if (token.length < 3) {
-                                    sendMsg(ServiceMessages.CHANGE_NICKNAME_NO);
-                                    continue;
-                                }
-                                */
 
                                 String[] token = str.split(" ", 2);
                                 if (token.length < 2) {
@@ -122,16 +112,15 @@ public class ClientHandler {
                                     continue;
                                 }
                                 if (token[1].contains(" ")) {
-                                    sendMsg(ServiceMessages.CHANGE_NICKNAME_NO + "; Ник не может содержать пробелов");
+                                    sendMsg(ServiceMessages.CHANGE_NICKNAME_NO + "; Nickname cannot contain spaces");
                                     continue;
                                 }
                                 if(server.getAuthService().changeNick(this.nickname,token[1])){
-                                    //sendMsg("Ваш ник изменен на " + token[1]);
                                     this.nickname = token[1];
-                                    sendMsg(ServiceMessages.CHANGE_NICKNAME_OK + "; Ваш ник изменен на " + token[1]);
+                                    sendMsg(ServiceMessages.CHANGE_NICKNAME_OK + "; Your nickname changed at " + token[1]);
                                     server.broadcastClientList();
                                 }else{
-                                    sendMsg(ServiceMessages.CHANGE_NICKNAME_NO + "; Не удалось изменить ник. Ник " + token[1] + " уже существует");
+                                    sendMsg(ServiceMessages.CHANGE_NICKNAME_NO + "; Failed to change nickname. Nickname " + token[1] + " already exists");
                                 }
                             }
                         } else {
@@ -144,7 +133,6 @@ public class ClientHandler {
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
-                    //System.out.println("Client disconnect!");
                     logger.log(Level.INFO, "Client: " + login + " disconnect!");
                     server.unsubscribe(this);
                     try {
@@ -153,7 +141,6 @@ public class ClientHandler {
                         e.printStackTrace();
                     }
                 }
-//            }).start();
             });
 
         } catch (IOException e) {

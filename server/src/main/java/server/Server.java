@@ -27,27 +27,23 @@ public class Server {
             manager.readConfiguration(new FileInputStream("logging.properties"));
         } catch (IOException e) {
             e.printStackTrace();
-            throw new RuntimeException("Ошибка чтения файла конфигурации логирования");
+            throw new RuntimeException("Error reading logging configuration file");
         }
 
         executorService = Executors.newCachedThreadPool();
         clients = new CopyOnWriteArrayList<>();
-        //authService = new SimpleAuthService();
         if(!SQLHandler.connect()){
-            logger.log(Level.SEVERE, "Не удалось подключиться к БД");
-            throw new RuntimeException("Не удалось подключиться к БД");
+            logger.log(Level.SEVERE, "Failed to connect to database");
+            throw new RuntimeException("Failed to connect to database");
         }
-        //authService = new MySQLAuthService();
         authService = new DBAuthService();
         try {
             server = new ServerSocket(PORT);
             logger.log(Level.INFO, "Server started!");
-            //System.out.println("Server started!");
 
             while (true) {
                 socket = server.accept();
                 logger.log(Level.INFO, "Client connected: " + socket.getRemoteSocketAddress());
-                //System.out.println("Client connected: " + socket.getRemoteSocketAddress());
                 new ClientHandler(this, socket);
             }
         } catch (IOException e) {
@@ -57,7 +53,6 @@ public class Server {
             executorService.shutdown();
             SQLHandler.disconnect();
             logger.log(Level.INFO, "Server stop!");
-            //System.out.println("Server stop");
             try {
                 server.close();
                 authService.disconnect();

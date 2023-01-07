@@ -3,8 +3,8 @@ package server;
 import java.sql.*;
 
 public class MySQLAuthService implements AuthService{
-    private static Connection connection; //для подключения к БД
-    private static Statement stmt; //запросы к БД
+    private static Connection connection;
+    private static Statement stmt;
     private static PreparedStatement psInsert;
     private static PreparedStatement psSelectLoginWithSelectionLogin;
     private static PreparedStatement psSelectWithSelectionLogin;
